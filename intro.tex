@@ -1,0 +1,137 @@
+\section{Introduction}
+
+%1. Current IO structure
+% In today's high-performance computing (HPC) systems,
+% application's performance is no longer only throttled by computation capability,
+% but also perceived I/O rate between
+% numerous amount of parallel processor cores and 
+% petabyte volume of storage equipments.
+% Current IO architects put IO forwarding nodes in charge of performing IO.
+% These IO gateways, together with parallel file system (PFS) software (client side),
+% sits between internal system networks that serving communication
+% between compute nodes and external system networks
+% that interconnects storage nodes\cite{Ross:IOSystem}.
+% Applications under this architecture can expect to achieve
+% 810 GB/s per PFS sustained bandwidth in Trinity's Lustre\cite{TrinitySystem}
+% in later 2016, but still far from the target of 60 TB/s
+% for extra-scale computing platform\cite{Shalf:HPCCS:2010}.
+
+% %2. Challenge to current IO architecture and burst buffer come to resuce.
+% The challenge roots in the missing gap in HPC's memory hierarchy.
+% The ratio of IO rate of memory on the compute node to the storage disk
+% is 100 to 10,000 cycles\cite{TrinitySystem}.
+% Such a gap makes difference because scientific applications on HPC are exposed to
+% bursty IO patterns\cite{Carns:MSST:2011, Kim:PDSW:2010},
+% resulting from application's
+% defensive IO strategy\cite{Latham:CSD:2012, Naik:ICPPW:2009, Dennis:CUG:2009}
+% and the needs of subsequent processing of application output.
+% 
+% 
+% %On one hand, applications checkpoint periodically
+% %(so that computation could be restarted after system fault)
+% %or store intermediate output for subsequent analysis or visualization;
+% %on the other hand, pushing data from memory to external,
+% %parallel file system is unproductive due to the IO cycle gap.
+% %Though this conflict can be fixed by providing higher IO bandwidth capacity,
+% %another character of bursty IO pattern introduces another problem,
+% %underutilization of storage system.
+% %Production applications could generate hundreds of GB to
+% %tens of TB data in one IO request with significant idle interval.
+% %For example, observed idle interval of write-intensive jobs
+% %reported on Intrepid\cite{Liu:MSST:2012},
+% %varies from several minutes to 2 hours.
+% 
+% %3. Very high level intro to burst buffer
+% As an alternative storage design, burst buffer\cite{Bent:HBP:2011, Grider:EXA:2010}
+% is targeting on fixing the issues caused by bursty IO pattern.
+% It fills the gap in memory hierarchy with storage hardware technology
+% faster than traditional disks.
+% Bursty IO requests could thus be efficiently absorbed and spread out
+% into burst buffer nodes.
+% Researchers\cite{Liu:MSST:2012} have demonstrated that application perceived IO
+% bandwidth are significantly improved on burst buffer enabled system.
+% Given its usefulness, we expect user will explicitly request for
+% this new resource upon job submission.
+
+
+In the field of high performance computing (HPC), 
+system performance is no longer throttled only by computation capability,
+but also by the ever-increasing I/O gap
+between computational resources and disk-based storage technologies.
+For example, on the early-state Trinity system~\cite{TrinitySystem}, the I/O nodes between
+the compute nodes and the external storage can deliver transfer speed at 810 GB/s,
+which is still far from the target of 60 TB/s for the exascale computers\cite{Shalf:HPCCS:2010}.
+The gap is critical because scientific applications typically exhibit
+``bursty" I/O patterns,
+resulting from application's defensive I/O strategy
+and the need  for subsequent data processing\cite{Carns:MSST:2011, Kim:PDSW:2010, Latham:CSD:2012, Naik:ICPPW:2009, Dennis:CUG:2009}. 
+When multiple applications attempt to access the storage system simultaneously, 
+it is easy to saturate
+the I/O bandwidth, leading to severe performance degradation.
+
+
+%3. Very high level intro to burst buffer
+Extensive research have been conducted to improve I/O performance on HPC systems from
+both hardware and software layers.
+We have witnessed a tremendously growing use of flash memory based storage in recent years.
+Recently, burst buffer (i.e., a solid state disk based or flash based cache tier)
+is proposed to absorb and spread out
+the ``bursty" application I/O patterns\cite{Bent:HBP:2011, Grider:EXA:2010}.
+% This new cache tier is capable of absorbing and spreading out 
+% the ``bursty" application I/O pattern\cite{Bent:HBP:2011, Grider:EXA:2010}.
+Studies have demonstrated that the perceived I/O
+bandwidth can be significantly improved on burst-buffer-enabled systems\cite{Liu:MSST:2012}.
+As such, HPC users are encouraged to explicitly request burst buffer resources at job submission 
+on burst-buffer-enabled systems\cite{apex-workflow}.
+
+%4. Our work, a new batch scheduler
+In this paper, we propose \textit{Cerberus}\footnote{In Greek mythology,
+Cerberus is a monstrous three-headed dog (three-phase scheduler),
+who guards the gate of the underworld to the earth (HPC system),
+preventing the dead (jobs) from leaving (running).},
+a novel batch scheduler for HPC systems equipped with burst buffer. 
+We propose a three-phase job model.
+%based on the critical use cases of burst buffer, including
+%application checkpoint restart and staging in/out data. 
+The lifetime of a user job is divided into three phases:
+\textit{stage in}, \textit{running}, and \textit{stage-out}.
+Burst buffer is used for different purposes in these phases.
+Unlike existing batch schedulers that make scheduling decision for each job upon its submission,
+Cerberus participates in all of the three phases.
+By dividing the lifetime of user jobs into three phases,
+Cerberus adopts different optimization strategies for 
+making scheduling decision based on job requirement at each phase.
+We conduct a series of event driven simulations to evaluate our design. 
+As shown later on,
+the preliminary results demonstrate that the three-phase design of Cerberus 
+not only boosts system responsiveness, but also improves job performance. 
+Specifically,
+Cerberus accelerates job execution, reduces job response time 
+and improves the average system throughput.
+Put together, we make three key contributions in this work:
+\begin{enumerate}
+        \item    We propose a three-phase job model (i.e., stage-in, running, and stage-out) 
+        to describe user jobs and further to facilitate job scheduling in a fine granularity.
+        
+        \item    We present Cerberus, 
+        a three-phase burst-buffer-aware scheduler for HPC systems equipped with burst buffer. 
+        Our design consists of several key optimization strategies for 
+        improving the performance of user jobs throughout different job phases.
+        
+        \item    We develop an event driven simulator called BBSim 
+        for simulating and evaluating Cerberus on a burst buffer enabled Blue Gene system
+        using read job trace. The simulator is open source and
+        freely available to the community\cite{bbsim-github}.
+\end{enumerate}
+
+
+In the remainder of this paper, Section 2 presents background and 
+motivation of using burst buffer on HPC systems.
+Section~\ref{Sec:Model} elaborates the three-phase job model.
+Section~\ref{Sec:Scheduler} describes the design of Cerberus.
+Section~\ref{Sec:Simulation} describes the design of BBsim, the event driven scheduling simulator.
+Section~\ref{Sec:Experiments} evaluates Cerberus by comparing it with various alternatives.
+Section~\ref{Sec:RelatedWorks} discusses the related works, 
+and Section~\ref{Sec:Conclusion} concludes this paper.
+
+

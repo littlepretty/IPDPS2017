@@ -1,0 +1,353 @@
+% \subsection{Optimize Stage-in Phase}
+% In the stage-in phase, only burst buffer demand is considered.
+% Scheduling is made based on the value of $bb\_in$ of jobs in $Q_I$.
+% If we care about data transfer throughput,
+% we should transfer as much data as possible by doing the following optimization:
+% \begin{align*}
+%         & \max \sum_{i\in S} bb\_in_i \\
+%         & s.t. \sum_{i\in S} bb\_in_i \leq BB_{available} \numberthis \label{Equ:MaxTransferData}
+%         %\left\{
+%                 %\begin{array}{l}
+%                         %S \subseteq J_{Q_I} \\ [1em]
+%                         %\sum_{i\in S} bb\_in_i \leq BB_{available}
+%                 %\end{array} 
+%         %\right.
+% \end{align*}
+% where $J_{Q_I}$ stands for all jobs in input queue at the time considering,
+% $S\subseteq J_{Q_I}$ is the set of job selected by Cerberus,
+% $bb\_in_i$ is the burst buffer demand of $job_i$,
+% $BB_{available}$ is system's available amount of burst buffer.
+% 
+% Stage-out phase scheduling are made based on the value of $bb\_out$ of jobs in $Q_O$.
+% Optimization formula for different purpose are almost the same as
+% Equation~\ref{Equ:MaxTransferData},
+% except that $bb\_in$ is replaced with $bb\_out$,
+% $J_{Q_I}$ is replaced with $J_{Q_O}$, the job set of output queue.
+
+
+\section{Optimization Enhancement}
+\label{Sec:Opt}
+
+Cerberus can be further enhanced using various optimizations
+when making the scheduling decisions for jobs in each queue.
+This section defines two types of optimization techniques used for scheduling jobs in one of the three phases.
+We compute the solutions using dynamic programming.
+
+\subsection{Scheduling Optimization in Stage-in Phase}
+
+In the stage-in phase, jobs require only the burst buffer.
+Cerberus schedules the jobs in $Q_I$ based on their burst buffer demands $bb\_in$.
+To maximize burst buffer's utilization, one can schedule the jobs according to the following optimization:
+\begin{align*}
+        \mathbf{Problem} & \text{ } \mathbf{1} \\
+        \max &\sum_{i\in J_{Q_I}} bb\_in_i \cdot x_i \\
+        s.t. &\left\{
+                \begin{array}{l}
+                        x_i \in \{0, 1\}, \forall i \in J_{Q_I}\\ [0.8em] \numberthis \label{Equ:MaxTransferData}
+                        \sum_{i \in J_{Q_I}} bb\_in_i \cdot x_i \leq BB_{available}
+                \end{array}
+        \right.
+\end{align*}
+%\begin{align*}
+        %& \max \sum_{i\in S} bb\_in_i \\
+        %& s.t. \sum_{i\in S} bb\_in_i \leq BB_{available} \numberthis \label{Equ:MaxTransferData}
+        %%\left\{
+                %%\begin{array}{l}
+                        %%S \subseteq J_{Q_I} \\ [1em]
+                        %%\sum_{i\in S} bb\_in_i \leq BB_{available}
+                %%\end{array} 
+        %%\right.
+%\end{align*}
+where $J_{Q_I}$ stands for all jobs in the input queue,
+$bb\_in_i$ is the burst buffer demand of $job_i$,
+$BB_{available}$ is the system's current available capacity of the burst buffer.
+We denote the set of jobs that achieve the maximum data transfer throughput as
+$\mathcal{J} = \{x_i|x_i = 1, \text{ } \forall i \in J_{Q_I}\}$.
+
+
+% \subsection{Optimize Running Phase}
+% Running jobs require not only compute nodes, but burst buffer to ensure performance and correctness.
+% Scheduling are accordingly made based on the value of $c$ and $bb\_run$ of jobs in $Q_R$.
+% To maximize multiple types of resource's utilization,
+% we convert it to the knapsack problem by defining the value of the $job_i$ as
+% \begin{equation}
+%         v_i = \frac{c_i / CN}{rt_i} \times \frac{bb\_run_i / BB}{rt_i}
+%         \label{Equ:DefValue}
+% \end{equation}
+% where $rt_i$ is the running time of $job_i$, the time it takes up the computing nodes.
+% By defining \textit{value} as Equation~\ref{Equ:DefValue},
+% we prefer these tasks that claims to take up node resources with short duration.
+% Unfortunately, it is difficult to predict $rt_i$ before actually running the job.
+% Of course we could use the \textit{expected running time} $ert_i$ specified by user.
+% However, by examining the log traces from Argonne National Laboratory (ANL)\cite{JobTrace},
+% we found that the variance between $rt_i$ and $ert_i$ is significantly different.
+% For now we can just assume $ert_i$ represent $rt_i$ of $job_i$.
+% In the future, we could adopt machine learning or data mining ideas
+% to predict the running time of a job with demand vector.
+% %Notice that then the value of a task is proportional to $c_i*bb_i$.
+% The optimizing formula can thus be
+% \begin{align*}
+%         & \max \sum_{i \in S}\frac{c_i}{ert_i} * \frac{bb\_run_i}{ert_i} \\
+%         & s.t. \left\{
+%                 \begin{array}{l}
+%                         %S \subseteq J_{Q_R} \\ [1em]
+%                         \sum_{i \in S} c_i \leq CN_{available} \\ [0.5em]\numberthis \label{Equ:MaxProduct} 
+%                         \sum_{i \in S} bb\_run_i \leq BB_{available}
+%                 \end{array} 
+%         \right.
+% \end{align*}
+% where $J_{Q_R}$ is the set of jobs in running queue,
+% $S\subseteq J_{Q_R}$ stands for jobs selected by scheduler,
+% $CN_{available}$ and $BB_{available}$ represent the amount of system's available resources
+% (compute nodes and burst buffer nodes) at current moment.
+
+
+
+\subsection{Scheduling Optimization in Running Phase}
+Running jobs not only require the compute nodes for computation,
+but also utilize the burst buffer to enhance the I/O performance.
+Here we take a general strategy by defining the \textbf{profit} of $job_i$
+in $Q_R$ as it uses $c_i$ compute nodes and $bb\_run_i$ amount of the burst buffer
+\begin{equation}
+        p_i = f(c_i, bb\_run_i, ert_i)
+\label{Equ:GeneralProfit}
+\end{equation}
+where $ert_i$ is the expected running time of $job_i$.
+
+Similar to the 0-1 knapsack problem, the objective is to maximize the total profit of jobs in the running queue, formularized as
+\begin{align*}
+        \mathbf{Problem} & \text{ } \mathbf{2} \\
+        \max &\sum_{i \in J_{Q_R}} p_i \cdot x_i \\
+        s.t. &\left\{
+                \begin{array}{l}
+                        x_i \in \{0, 1\}, \forall i \in J_{Q_R} \\ [0.8em]
+                        \sum_{i \in J_{Q_R}} c_i \cdot x_i \leq CN_{available} \\ [0.8em]\numberthis \label{Equ:MaxProduct} 
+                        \sum_{i \in J_{Q_R}} bb\_run_i \cdot x_i \leq BB_{available}
+                \end{array} 
+        \right.
+\end{align*}
+where $J_{Q_R}$ is the set of jobs in the running queue,
+$CN_{available}$ and $BB_{available}$ represent the amount of system's current available resources.
+We denote the set of jobs who have the maximum profit as
+$\mathcal{J}  = \{x_i|x_i=1, \text{ } \forall i \in J_{Q_R}\}$.
+
+As an example, we measure the value of a job based on how efficient one utilize its resource:
+\begin{equation}
+        p_i = \frac{c_i / CN}{ert_i} \times \frac{bb\_run_i / BB}{ert_i}
+        \label{Equ:DefValue}
+\end{equation}
+Here, efficiency is measured as the ratio of the job resource demand to the expected job running time,
+where the share of the requested compute nodes ($c_i/CN$) and the burst buffer ($bb\_run/BB$) are used to
+represent the demand size.
+Specializing Problem 2 using \equref{Equ:DefValue} in fact favors tasks that claim to take up the resources with a short duration, as we will discuss in Section~\ref{Sec:Experiments}.
+%\begin{align*}
+        %& \max \sum_{i \in S}\frac{c_i}{ert_i} * \frac{bb\_run_i}{ert_i} \\
+        %& s.t. \left\{
+                %\begin{array}{l}
+                        %%S \subseteq J_{Q_R} \\ [1em]
+                        %\sum_{i \in S} c_i \leq CN_{available} \\ [0.5em]\numberthis \label{Equ:MaxProduct} 
+                        %\sum_{i \in S} bb\_run_i \leq BB_{available}
+                %\end{array} 
+        %\right.
+%\end{align*}
+
+\subsection{Scheduling Optimization in Stage-out Phase}
+
+The stage-out phase scheduling is designed based on the value of $bb\_out$ of the jobs in $Q_O$.
+The optimization formula for the stage-out phase are almost the same as the ones in Problem 1, except that $bb\_in_i$ is replaced with $bb\_out_i$, and
+$J_{Q_I}$ is replaced with $J_{Q_O}$, the job set of output queue.
+
+
+\subsection{Solving the Optimization Problems}
+% It is trivial to show that optimization problem~\ref{Equ:MaxTransferData}
+% is equivalent to 0-1 knapsack problem.
+% Problem~\ref{Equ:MaxProduct} can be informally treat as 2-dimension 0-1 knapsack problem.
+% We expect all of them are NP-hard problems.
+% We can solve them with dynamic programming in pseudo polynomial time.
+% Applying memorization could also help accelerate the solving process.
+% However, we are not interested in the optimal result of
+% problem~\ref{Equ:MaxTransferData} and problem~\ref{Equ:MaxProduct}
+% but in a combination of jobs that yields the optimal solution,
+% which, fortunately, can also be tracked back down
+% using the memorizations kept in dynamic programming.
+
+% %The solution to Problem~\ref{Equ:MaxTransferData},
+% %Problem~\ref{Equ:MaxTaskNumber} and Problem~\ref{Equ:MaxProduct} are similar.
+% First, for Problem~\ref{Equ:MaxTransferData}, the recursive relationship is
+% given by Recursion~\ref{Equ:MaxTransferDataRecursion}.
+% In~\ref{Equ:MaxTransferDataRecursion}, the memo we keeps during solving is
+% the optimal solution for 
+% $jobs=(job_1, job_2, \ldots, job_i)$ with $w$ GB of available burst buffer.
+% For Problem~\ref{Equ:MaxProduct}, we keep the memo of the optimal solution 
+% for $jobs=(job_1, job_2, \ldots, job_i)$
+% with $c$ computing nodes and $w$ GB of burst buffer being available.
+
+% Scheduler can obtain an optimal combination of jobs by tracking along the memo.
+% Take the problem~\ref{Equ:MaxProduct} problem for example.
+% We start from $dp(n, CN, BB)$.
+% If $c_n \leq CN$ and $bb\_in_n \leq BB$, $job_n$ should be scheduled if
+% $dp(i-1, c, w) \leq dp(i-1, c - c_i, w - bb\_in_i) + c_i bb\_in_i$ and
+% recurse with $dp(n - 1, CN - c_i, BB - bb\_in_i)$;
+% otherwise, $job_n$ should be skipped and we recurse the process on $dp(n-1, CN, BB)$.
+% The time complexity of solving Recursion~\ref{Equ:MaxTransferDataRecursion} is $O(n\times BB)$.
+% The time complexity of solving Recursion~\ref{Equ:MaxProductRecursion}
+% is $O(n\times CN\times BB)$.
+
+% Notice that $CN$ and $BB$ may be very large integers,
+% making the pseudo-polynomial algorithm unsuitable
+% to be used online by scheduler.
+% In practice, we could reduce the time complexity by allocating resource
+% in a coarser granularity.
+% For example, jobs usually asks for compute node in the unit of $cn\_unit = 512$ nodes;
+% demands for burst buffer nodes on checkpointing and output are
+% usually in the unit of $bb\_unit = 1$ TB.
+% We can divide both $CN$ and $c_i$ by $cn\_unit$;
+% divide both $BB$ and $bb\_run, bb\_out$ by $bb\_unit$.
+% It is also possible to reduce the value of $n$, the number of jobs in the queue.
+% For example, we can consider only $\frac{1}{\alpha}n$ jobs in the queue.
+% This will give us only the partial optimal solution
+% in exchange of less computation complexity.
+
+It is trivial to show that the optimization of Problem 1
+is equivalent to the 0-1 knapsack problem.
+Problem 2 can be informally treat as the 2-dimension 0-1 knapsack problem.
+We expect all of them to be NP-hard problems.
+Dynamic programming is adopted to solve them in pseudo-polynomial time.
+Applying memorization could also help accelerate the solving process.
+In addition, we are not interested in the optimal result of
+Problem 1 and Problem 2,
+but in a combination of jobs $\mathcal{J}$ that yields to the optimal solution,
+which, fortunately, can also be tracked back down using the memorizations stored during the dynamic programming execution.
+%How to fill in memo and track back optimal $\mathcal{J}$ are shown in Algorithm~\ref{Alg:MaxBB}
+%and Algorithm~\ref{Alg:MaxCPU} for Problem 1
+%and Problem 2 respectively.
+%The time complexity of Algorithm~\ref{Alg:MaxBB} is $O(n\times BB)$.
+%The time complexity of solving Algorithm~\ref{Alg:MaxCPU} is $O(n\times CN\times BB)$.
+For Problem 1, the recursive relationship is given by \equref{Equ:MaxTransferDataRecursion}.
+The recursion that solves Problem 2 is given by \equref{Equ:MaxProductRecursion}.
+Solving \equref{Equ:MaxTransferDataRecursion} and 
+backtracking $\mathcal{J}_{Q_I}$ or $\mathcal{J}_{Q_O}$ in total take time proportional to $n\times BB$.
+Similarly, solving \equref{Equ:MaxProductRecursion} and selecting $\mathcal{J}_{Q_R}$ using memo
+are $O(n\times CN\times BB)$.
+
+
+\begin{strip}
+        \begin{align}
+                dp(i, w) = & 
+                \left\{
+                        \begin{array}{l}
+                                0, \text{ if $i=0$ } \\ [0.6em]
+                                dp(i-1, w), \text{ if $bb\_in_i > w$} \\ [0.6em]
+                                \max \{ dp(i-1, w), dp(i-1, w-bb\_in_i) + bb\_in_i \}, \text{ if $bb\_in_i \leq w$}
+                        \end{array} 
+                \right.
+                \label{Equ:MaxTransferDataRecursion} 
+        \end{align}
+\end{strip}
+
+\begin{strip}
+        \begin{align}
+                dp(i, c, w) = &
+                \left\{
+                        \begin{array}{l}
+                                0, \text{ if $i=0$ } \\ [0.6em]
+                                dp(i-1, c, w), \text{ if $c_i > c$ or $bb\_run_i > w$} \\ [0.6em]
+                                \max \{ dp(i-1, c, w), dp(i-1, c - c_i, w - bb\_run_i) + p_i \}, \text{ if $c_i \leq c$ and $bb\_run_i \leq w$}
+                        \end{array} 
+                \right.
+                \label{Equ:MaxProductRecursion}
+        \end{align}
+\end{strip}
+
+
+%\algrenewcommand{\algorithmiccomment}[1]{\hskip1em$/*$ #1 $*/$}
+
+%\begin{algorithm}[t]
+%\caption{Maximize Data Transfer of Jobs in $Q_I$ or $Q_O$}
+%\label{Alg:MaxBB}
+%\begin{algorithmic}[1]
+        %\State $\boldsymbol{bb} \gets $ burst buffer demands of $J_Q$
+        %\State $\boldsymbol{dp} \gets \boldsymbol{0}_{(N+1) \times (BB+1)}$
+        %\State $\mathcal{J} \gets \emptyset$\Comment{scheduling result}
+        %\\
+        %\Function{FillInMemo}{ }
+                %\For{$i \gets 1, N$}
+                        %\For{$w \gets 1, BB$}
+                                %\If{$w \geq bb_i$}
+                                        %\State $dp_1 = dp(i-1, w-bb_i)+bb_i$
+                                        %\State $dp_2 = dp(i-1, w)$
+                                        %\State $dp(i, w) \gets \max\{dp_1, dp_2\}$
+                                %\Else
+                                        %\State $dp(i,w) \gets dp(i-1,w)$
+                                %\EndIf
+                        %\EndFor
+                %\EndFor
+                %\State \Call{TrackBackJobs}{$N, BB$}
+        %\EndFunction
+        %\\
+        %\Function{TrackBackJobs}{$i, w$}
+                %\If{$i > 0$}
+                        %\If{$w \geq bb_i$}
+                                %\State $dp_1 = dp(i-1, w-bb_i)+bb_i$
+                                %\State $dp_2 = dp(i-1, w)$
+                                %\If{$dp_1 \geq dp_2$}
+                                        %\State $\mathcal{J} = \mathcal{J} \cup job_i$
+                                        %\State \Call{TrackBackJobs}{$i-1, w-bb_i$}
+                                %\Else
+                                        %\State \Call{TrackBackJobs}{$i-1, w$}
+                                %\EndIf
+                        %\Else
+                                %\State \Call{TrackBackJobs}{$i-1, w$}
+                        %\EndIf
+                %\EndIf
+        %\EndFunction
+%\end{algorithmic}
+%\end{algorithm}
+
+%\begin{algorithm}[t]
+%\caption{Maximize Profit of Jobs in $Q_R$}
+%\label{Alg:MaxCPU}
+%\begin{algorithmic}[1]
+        %\State $\boldsymbol{bb} \gets $ burst buffer demands of $J_Q$
+        %\State $\boldsymbol{cn} \gets $ compute nodes demands of $j \in J_Q$
+        %\State $\boldsymbol{dp} \gets \boldsymbol{0}_{(N+1) \times (CN) \times (BB+1)}$
+        %\State $\boldsymbol{v} \gets$ values of $j \in J_Q$
+        %\State $\mathcal{J} \gets \emptyset$\Comment{scheduling result} 
+        %\\
+        %\Function{FillInMemo}{ }
+                %\For{$i \gets 1, N$}
+                        %\For{$c \gets 1, CN$} 
+                                %\For{$w \gets 1, BB$}
+                                        %\If{$c \geq cpu_i$ and $w \geq bb_i$}
+                                                %\State $dp_1 = dp(i-1, c-cn_i, w-bb_i)+v_i$
+                                                %\State $dp_2 = dp(i-1, c, w)$
+                                                %\State $dp(i, c, w) \gets \max\{dp_1, dp_2\}$
+                                        %\Else
+                                                %\State $dp(i,c,w) \gets dp(i-1,c,w)$
+                                        %\EndIf
+                                %\EndFor
+                        %\EndFor
+                %\EndFor
+                %\State \Call{TrackBackJobs}{$N, CN, BB$}
+        %\EndFunction
+        %\\
+        %\Function{TrackBackJobs}{$i, c, w$}
+                %\If{$i > 0$}
+                        %\If{$c \geq cpu_i$ and $w \geq bb_i$}
+                                %\State $dp_1 = dp(i-1, c-cn_i, w-bb_i)+v_i$
+                                %\State $dp_2 = dp(i-1, c, w)$
+                                %\If{$dp_1 \geq dp_2$}
+                                        %\State $\mathcal{J} = \mathcal{J} \cup job_i$
+                                        %\State \Call{TrackBackJobs}{$i-1, c-cpu_i, w-bb_i$}
+                                %\Else
+                                        %\State \Call{TrackBackJobs}{$i-1, c, w$}
+                                %\EndIf
+                        %\Else
+                                %\State \Call{TrackBackJobs}{$i-1, c, w$}
+                        %\EndIf
+                %\EndIf
+        %\EndFunction
+%\end{algorithmic}
+%\end{algorithm}
+
+
