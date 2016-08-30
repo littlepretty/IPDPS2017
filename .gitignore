@@ -1,0 +1,12 @@
+*.pyc
+.ropeproject
+*.egg-info
+*eps-converted-to.pdf
+*.pdf
+*.aux
+*.bbl
+*.blg
+*.dvi
+*.ps
+tags
+
