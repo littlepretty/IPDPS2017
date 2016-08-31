@@ -110,18 +110,16 @@ Cerberus accelerates job execution, reduces job response time
 and improves the average system throughput.
 Put together, we make three key contributions in this work:
 \begin{enumerate}
-        \item    We propose a three-phase job model (i.e., stage-in, running, and stage-out) 
-        to describe user jobs and further to facilitate job scheduling in a fine granularity.
-        
-        \item    We present Cerberus, 
-        a three-phase burst-buffer-aware scheduler for HPC systems equipped with burst buffer. 
-        Our design consists of several key optimization strategies for 
-        improving the performance of user jobs throughout different job phases.
-        
-        \item    We develop an event driven simulator called BBSim 
-        for simulating and evaluating Cerberus on a burst buffer enabled Blue Gene system
-        using read job trace. The simulator is open source and
-        freely available to the community\cite{bbsim-github}.
+        \item    We propose a three-phase job model (i.e., stage-in, running, and stage-out)
+                to facilitate job scheduling in a fine granularity.
+        \item    We present Cerberus, a three-phase burst buffer aware scheduler
+                for HPC systems equipped with burst buffer.
+                Our design consists of several key optimization strategies for
+                improving the performance of user jobs throughout different job phases.
+        \item    We develop an event driven simulator called BBSim
+                for simulating and evaluating Cerberus on a burst buffer enabled Blue Gene system
+                using authenitic job trace. The simulator is open source and
+                freely available to the community\cite{bbsim-github}.
 \end{enumerate}
 
 

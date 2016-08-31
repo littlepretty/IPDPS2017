@@ -15,7 +15,7 @@ the job with the number of required nodes and the expected runtime
 for making the scheduling decisions.
 The most commonly used scheduling policy is the First Come First Serve with EASY backfilling~\cite{tsafrir-tpds-2007}.
 However, on burst-buffer-enabled systems,
-the amount of available burst buffer capacity becomes a new scheduling constraint.
+the amount of available burst buffer capacity becomes a new scheduling object.
 
 In this work,
 we propose Cerberus, a burst-buffer-aware batch scheduler.
@@ -83,7 +83,7 @@ described in Section~\ref{SubSec:OptStageIn}-\ref{SubSec:OptStageOut}.
 %We propose and solve two optimizations targeting $Q_I/Q_O$ and $Q_R$ in Section~\ref{Sec:Opt}
 
 \subsection{Three-Phase Coordination}
-\label{SubSet:Coordination}
+\label{SubSec:Coordination}
 The three phase model does not assume data independence between the three phases.
 Cooperations are necessary in scheduling the three phases.
 First, only after finishing the stage-in phase can a job be ready for running.
@@ -110,13 +110,14 @@ This rule breaks when application generates output data more than main memory's 
 When this case occurs, we suggest system put output data chunk first from memory to burst buffer
 so that application can resume execution with freed memory;
 then we let burst buffer node handle the data transfer to external storage.
-Only the last piece of output data are handled in the stage-out phase.
+The stage-out phase handles only the last piece of output data as in normal case.
 
 Finally, it is possible that none of three queues are empty at the moment of a scheduling instance.
 We choose a heuristic strategy to determine the scheduling order when
 Cerberus has to handle multiple queues at the same time.
-Note that jobs finishing the \textit{running} and the \textit{stage-out} phases
-will (partially) release the resources, and we set the priority of queues to be $priority(Q_O) > priority(Q_R) > priority(Q_I)$.
+Noting that jobs finishing the \textit{running} and the \textit{stage-out} phases will
+(partially) release the resources,
+we set the priority of queues to be $priority(Q_O) > priority(Q_R) > priority(Q_I)$.
 This greedy heuristic works well when the demand of the jobs in $J_{Q_I}$ is low.
 However, it is possible to make jobs stack up at the entry of the system,
 whose solution is part of our future work.
@@ -160,7 +161,7 @@ It can be solved in pseudo-polynomial time through dynamic programming and backt
 Memorization technique is applied in order to accelerate the solving process.
 The recursive relationship used in our solution is given by \equref{Equ:MaxTransferDataRecursion}.
 The time complexity of solving \equref{Equ:MaxTransferDataRecursion} and 
-backtracking $\mathcal{J}_{Q_I}$ is $O(n\times BB)$.
+backtracking $\mathcal{J}_{Q_I}$ is $O(|Q_I|\times BB_{available})$.
 
 
 \subsection{Scheduling in the Running Phase}
@@ -218,7 +219,7 @@ Specializing Problem 2 using \equref{Equ:DefValue} in fact favors tasks that cla
 Problem 2 can be informally treat as the two-dimension 0-1 knapsack problem.
 We use the same dynamic programming skill to solve Problem 2.
 The recursion is given by \equref{Equ:MaxProductRecursion}.
-The time complexity of solving \equref{Equ:MaxProductRecursion} and selecting $\mathcal{J}_{Q_R}$ with memorization technique is $O(n\times CN\times BB)$.
+The time complexity of solving \equref{Equ:MaxProductRecursion} and selecting $\mathcal{J}_{Q_R}$ with memorization technique is $O(|Q_R|\times CN_{available}\times BB_{available})$.
 
 
 \subsection{Scheduling in the Stage-out Phase}
@@ -229,7 +230,7 @@ The optimization formula for the stage-out phase is the same as Problem 1,
 except that $bb\_in_i$ is replaced with $bb\_out_i$, 
 and $J_{Q_I}$ is replaced with $J_{Q_O}$, the job set of output queue.
 The solution is also extremely similar to \equref{Equ:MaxTransferDataRecursion} and
-has the same $O(n\times BB)$ time complexity.
+has the same $O(|Q_O|\times BB_{available})$ time complexity.
 
 
 %\subsection{Solving the Optimization Problems}
@@ -282,7 +283,7 @@ has the same $O(n\times BB)$ time complexity.
 
 The optimal solutions in any of scheduling phases may not be unique;
 then backtracking via memoization only yields one of the optimal solution to Problem 1-3.
-For example, backtracking $\mathcal{J}_{Q_R}$ using $dp(i,c,w)$ can only return 1 scheduling
+For example, backtracking $\mathcal{J}_{Q_R}$ using $dp(i,c,w)$ only return 1 scheduling
 configuration that maximize our optimization goal.
 If the runtime system designer don't specify extra constraints in the scheduling problems,
 Cerberus, as any other scheduler, cannot automatically prioritize \textbf{optimal} solutions
@@ -295,7 +296,7 @@ neither of the constraints in \equref{Equ:MaxTransferData}.
 To avoid starving certain jobs demanding extremely large number of burst buffers and/or cores,
 Cerberus keeps tracking of their holding time.
 When the waiting time exceed certain threshold, Cerberus will stop the normal scheduling
-process to ensure dispatching the large jobs.
+process to dispatch the large jobs.
 
 
 
