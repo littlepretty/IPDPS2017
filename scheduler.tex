@@ -289,10 +289,10 @@ Cerberus, as any other scheduler, cannot automatically prioritize \textbf{optima
 because prioritizing using any hidden rules leads to some kind of unfairness.
 
 Another thing to point out is that Cerberus is \textbf{NOT} unfair to non-I/O jobs.
-As for Problem 1, non-I/O $nj$ jobs will always be selected by Cerberus.
-Since its $bb_{in} = 0$, adding it to $\mathcal{J}_{Q_I}$ will affect
+As for Problem 1, a non-I/O job will always be selected by Cerberus.
+Since we have $bb_{in} = 0$ for non-I/O jobs, adding it to $\mathcal{J}_{Q_I}$ will affect
 neither of the constraints in \equref{Equ:MaxTransferData}.
-To avoid starve certain extremely jobs demanding large number of burst buffers and/or cores,
+To avoid starving certain jobs demanding extremely large number of burst buffers and/or cores,
 Cerberus keeps tracking of their holding time.
 When the waiting time exceed certain threshold, Cerberus will stop the normal scheduling
 process to ensure dispatching the large jobs.
