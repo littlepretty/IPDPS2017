@@ -117,8 +117,9 @@ users are encouraged to explicitly request this new resource for performance enh
 Inspired by this requirement, it is necessary to holistically manage
 the allocation of these precious I/O resources,
 which naturally falls into the responsibilities of the batch scheduler.
-Unfortunately, existing schedulers are not aware of the burst buffer\cite{Moab, Cobalt}
-or they simply use the straightforward allocation policy, such as first-come first-serve\cite{SlurmBBGuide}.
+Some existing schedulers deals with burst buffer\cite{Moab, Cobalt} in a naive way.
+For example, SLRUM simply uses straightforward allocation policy,
+such as first-come first-serve\cite{SlurmBBGuide}.
 This paper aims to bridge the two isolated fields of HPC architecture:
 the novel burst buffer equipped HPC I/O subsystem and the
 traditional batch job queueing subsystem.
