@@ -52,21 +52,21 @@ System throughput is defined as the number of jobs finished in
 a fixed time period (500 seconds).
 
 
-\subsection{Utilizing Burst Buffer Versus Direct IO}
+\subsection{Utilizing Burst Buffer Versus Direct I/O}
 \label{Sec:Sim:DirectIOvsBB}
 
 We examine the scheduling performance when 
 jobs perform I/O operation in two different ways, 
-namely, \textit{utilizing burst buffer} and \textit{Direct IO}.
+namely, \textit{utilizing burst buffer} and \textit{Direct I/O}.
 In the Trinity architecture, parallel file system (PFS) is mounted by all the compute nodes,
 applications have the option to bypass the burst buffer 
 and to use the file system directly for their I/O operations.
-We refer this scenario as \textit{Direct IO}. 
-Apparently, the performance of \textit{Direct IO}
+We refer this scenario as \textit{Direct I/O}. 
+Apparently, the performance of \textit{Direct I/O}
 is limited by the bandwidth of the I/O nodes. 
 %However, applications will be exempted from
 %waiting in the stage-in and stage-out phases in 
-%the case of \textit{Direct IO} rather than utilizing the burst buffer
+%the case of \textit{Direct I/O} rather than utilizing the burst buffer
 %for I/O operations.
 
 
@@ -80,14 +80,14 @@ is limited by the bandwidth of the I/O nodes.
 % in system equipped with burst buffer.
 % In average case, \textit{nearly 99\% of the jobs scheduled by Cerberus
 % respond faster than Direct batch scheduler on non-BB system.}
-% The improvement mainly comes from the difference of IO operation efficiency between
-% traditional IO nodes and burst buffer nodes.
+% The improvement mainly comes from the difference of I/O operation efficiency between
+% traditional I/O nodes and burst buffer nodes.
 
 %=============XY==============
 Figure~\ref{Fig:DirectIOvsBBResponse} compares CDFs of job response
-time on the burst-buffer-enabled system and the traditional system (Direct IO).
+time on the burst-buffer-enabled system and the traditional system (Direct I/O).
 For the burst-buffer-enabled system, the job response time is bounded by 376,443.12 seconds.
-However, the worst case of Direct IO is catastrophic, 
+However, the worst case of Direct I/O is catastrophic, 
 i.e., a job takes 889,239.20 seconds to finish,
 which is 2.36 times slower than the slowest non-responsive job
 in the burst-buffer-enabled system.
@@ -111,7 +111,7 @@ respond faster than the traditional system without burst buffer, since the burst
 
 %=============XY==============
 Figure~\ref{Fig:DirectIOvsBBWait} reveals the aggregated job waiting time.
-Note that in the case of Direct IO, jobs only request compute nodes.
+Note that in the case of Direct I/O, jobs only request compute nodes.
 Thus, the waiting time is the duration between the job submission and the job starting time.
 The difference of the worst case waiting time in the both systems is drastic.
 On the system without burst buffer nodes, the waiting duration in the worst case is 3.02 times
@@ -246,7 +246,7 @@ The scheduling policy used in this experiment is first-come first-serve.
 % This gives Cerberus more opportunity to schedule the system resources.
 % At last, when comparing the case of Cerberus with 1D Cerberus,
 % we find another advantage of our 3-phase model.
-% If benign users can provide finer-grain information of data/IO demand,
+% If benign users can provide finer-grain information of data/I/O demand,
 % Cerberus can programme each queue separately and get better scheduling result.
 % In our simulation,
 % since Cerberus knows more about application's demand in different phases,
@@ -271,7 +271,7 @@ Here is the explanation: For the 1-phase-modeled jobs, the burst buffer nodes wi
 taken by the scheduled jobs throughout their lifetime. In contrast, Cerberus reclaims the burst buffer multiple times;
 It also releases the burst buffer nodes and the CPU resources at the earliest possible time, which allows Cerberus to schedule more system resources.
 %Finally, when comparing the cases of 3-Phase-3D with 3-Phase-1D, we find another advantage of our 3-phase model.
-In addition, if users can provide fine-grain information of data/IO demands,
+In addition, if users can provide fine-grain information of data I/O demands,
 Cerberus can coordinate three queues and make scheduling decision separately to achieve better scheduling result.
 For the 3-Phase-3D model, Cerberus knows each job's demand during the different phases,
 the worst absolute response time is less than 379,026 seconds.

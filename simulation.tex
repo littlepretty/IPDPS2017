@@ -116,7 +116,7 @@ The allocated resources are released at the following time points:
 %where $TS_{f\_x}$ stands for the timestamps of the finishing phase $x$,
 %$TS_{s\_x}$ stands for the timestamps of the starting phase $x$,
 %$BW_{x\_to\_y}$ stands for the bandwidth between $x$ and $y$.
-%BBSim does not simulate the data transfer between IO nodes and PFS through the network.
+%BBSim does not simulate the data transfer between I/O nodes and PFS through the network.
 
 % % system
 % We consider simulating the full Trinity super computer\cite{TrinitySystem}.
@@ -125,12 +125,12 @@ The allocated resources are released at the following time points:
 % and at least 9500 Intel Xeon Phi nodes.
 % There are 16 cores on each processor, thus totally 302,976 cores.
 % In the following experiments, we compare two identical system except that
-% IO nodes are replaced by the same number of burst buffer nodes.
+% I/O nodes are replaced by the same number of burst buffer nodes.
 % Eventually Trinity plans to delivery up to 576 burst buffer nodes of 3.7 PB,
-% consisted of Trinity IO nodes with PCIe SSD card.
+% consisted of Trinity I/O nodes with PCIe SSD card.
 % They are globally accessible as intermediate storage and distributed among cabinets.
 % Sequential read/write speed of burst buffer nodes is 8.0 GBps.
-% Bandwidth between CPU node and non-burst-buffer IO node is set to 2.5 GBps.
+% Bandwidth between CPU node and non-burst-buffer I/O node is set to 2.5 GBps.
 
 
 Our Python implementation of BBSim includes three major modules.
@@ -156,7 +156,7 @@ the next generation supercomputer in Los Alamos National Laboratory.
 Specifically, there are 576 burst buffer enabled nodes with aggregated 3.7 PB storage,
 which are globally accessible as the intermediate storage.
 The sequential read/write speed of burst buffer nodes is 8.0 GBps.
-The bandwidth between a CPU node and an IO node is set to 2.5 GBps.
+The bandwidth between a CPU node and an I/O node is set to 2.5 GBps.
 The time spent for job's I/O operation in our simulation is calculated by
 dividing the amount of transferred data by the corresponding bandwidth.
 
