@@ -26,10 +26,14 @@ contention problem at the batch scheduling level \cite{zhou:Cluster:2015}.
 The new scheduler coordinates the  I/O requests without hurting the fairness across applications.
 Liu et al. propose to move many file handling procedures to the I/O nodes to
 ameliorate the I/O pressure from the massive number of compute nodes\cite{Liu:MSST:2012}.
-Slurm develops a new module for its batch scheduler that allocates burst buffer
+SLURM develops a new module for its batch scheduler that allocates burst buffer
 resources to the submitted user jobs. With the pre-allocated burst buffer,
 the I/O performance of user jobs is greatly improved \cite{SlurmBBGuide}.
 However, the policy they used for the resource allocation is in a first-come, first-serve manner without optimization.
+PBS supports burst buffer aware scheduling in similar way as SLURM, 
+jobs are only dispatched when required burst buffer resource are ready\cite{PBSonCRAY}. 
+Their static burst buffer aware scheduling strategies would lead to low resource utilization.
+
 
 Our work is different from the existing research in the following ways.
 We target intelligently assigning burst buffer as a new system resource to the submitted user jobs.
