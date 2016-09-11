@@ -156,7 +156,8 @@ However, traditional batch schedulers have barely embraced the full potential of
 %either barely knows BB's existence or cannot fully utilize them in practice.
 In this paper, we model the execution of scientific applications
 that generate tens of TB of data on a supercomputer equipped with burst buffer.
-We characterize the lifetime of generic applications into three phases:
+% We characterize the lifetime of generic applications into three phases:
+We abstract the lifetime of generic applications into three logic phases:
 \textit{stage-in}, \textit{running}, and \textit{stage-out}.
 We develop a novel burst-buffer-aware batch scheduler \textit{Cerberus} to 
 manage resource allocation in different phases.
@@ -167,7 +168,8 @@ In the running phase, Cerberus maximizes the predefined objectives of job schedu
 We evaluate our design through extensive event driven simulations. 
 Our preliminary results demonstrate that
 1) compared to non-burst-buffer systems, Cerberus accelerates the job execution, reduces the job response time, and improves average system throughput by 192\%;
-2) three-phase based Cerberus extra boosts the average system throughput by 62\% comparing to traditional static burst-buffer-aware batch scheduler.
+% 2) three-phase based Cerberus extra boosts the average system throughput by 62\% comparing to traditional static burst-buffer-aware batch scheduler.
+\NOTE{2) three-phase based Cerberus extra boosts the average system throughput by 62\% comparing to traditional static burst-buffer-aware batch scheduler, such as SLURM and PBS.}
 \end{abstract}
 
 \IEEEpeerreviewmaketitle
