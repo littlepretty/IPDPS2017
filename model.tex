@@ -66,16 +66,27 @@ and the corresponding resource demand at each phase.
          only tries to read in the first chunk of the data chunks which is sufficient for
          the application to start running in \textit{running} phase.
  
+% \textbf{Running}: The scheduler allocates the job with the required
+%          number of compute nodes and the amount of burst buffer. 
+%          It then dispatches the job to the system for running.
+%          This is defined as \textit{running} phase.
+%          During the running phase, there could be frequent data exchange
+%          between the compute nodes and the burst buffer.
+%          For example, check-pointing could help to achieve high system fault tolerance.
+%          There are also cases that input data is so large that it must be read in
+%          chunks during job execution.
+
 \textbf{Running}: The scheduler allocates the job with the required
          number of compute nodes and the amount of burst buffer. 
          It then dispatches the job to the system for running.
          This is defined as \textit{running} phase.
          During the running phase, there could be frequent data exchange
          between the compute nodes and the burst buffer.
-         For example, check-pointing could help to achieve high system fault tolerance.
-         There are also cases that input data is so large that it must be read in
-         chunks during job execution.
- 
+         Applications may periodically write 'checkpoints' of their execution. 
+         There may also in-situ/in-transit data analytics/visualization in large simulation applications.
+         Some scientific workflows with coupled applications may also share, exchange and communicate
+         large chunk of data during running phases\cite{Romanus:CORR:15}.  
+
 \textbf{Stage-out}: When the job finishes computation and
          exits the \textit{running} phase, its output data need to be drained out
          to the external storage from the on-node memory. We define this as \textit{stage-out} phase.
