@@ -1,4 +1,4 @@
-\section{Background and Motivation}
+\section{Background}
 \label{Sec:Background}
 
 % % %1. The appear of burst buffer
@@ -84,81 +84,3 @@ Economical solid-state disks as a tier of burst buffer could also be used as
 out-of-core complement to insufficient main memory\cite{Romanus:CORR:15},
 or working place for data analysis (reductions, feature extraction compression etc.)
 and visualization\cite{TrinitySystem}.
-
-
-% % %3. Motivate burst buffer aware scheduler
-% % Given the critical role of burst buffer in future HPC I/O system,
-% % we expect user will be actively involved in requesting it for
-% % better their own job's performance.
-% % As a result, it is necessary, or even urgent, to systematically manage
-% % the allocation of these second precious resources (secondary to compute nodes).
-% % This naturally falls into the responsibility of HPC workload scheduler.
-% % Unfortunately, existing schedulers
-% % either have not yet been aware to burst buffer\cite{Moab} %other scheduler citation needed
-% % or just provide very naive allocation policy\cite{SlurmBBGuide}.
-% % This paper tries to bridge two isolated fields of HPC architecture,
-% % the novel burst buffer equipped HPC I/O subsystem and
-% % traditional batch job queueing subsystem.
-% % The bridge build upon a 3-phase model that motivated by two of the most
-% % important usage cases of burst buffer:
-% % application checkpoint restart and data cache/pre-fetch for stage in/out.
-% % The benefit of burst buffer nodes will be more than just higher transfer
-% % bandwidth, if it were intelligently allocated by scheduler.
-% % For example, the first case could speedups the \textit{running phase} of
-% % user's application by acutely absorb the bursty checkpoint-purpose I/O request;
-% % the second case reduce the application's waiting time via
-% % contracted input/output stage in the execution pipeline of application series.
-% % To our best knowledge, this is the first attempt to holistically schedule jobs running on novel burst buffer enabled storage architecture.
-
-
-%3. Motivate burst buffer aware scheduler
-Given the critical role of burst buffer in future HPC systems,
-users are encouraged to explicitly request this new resource for performance enhancement\cite{apex-workflow}.
-Inspired by this requirement, it is necessary to holistically manage
-the allocation of these precious I/O resources,
-which naturally falls into the responsibilities of the batch scheduler.
-Some existing schedulers deals with burst buffer\cite{Moab, Cobalt} in a naive way.
-For example, SLRUM simply uses straightforward allocation policy,
-such as first-come first-serve\cite{SlurmBBGuide}.
-This paper aims to bridge the two isolated fields of HPC architecture:
-the novel burst buffer equipped HPC I/O subsystem and the
-traditional batch job queueing subsystem.
-The bridge builds upon a three-phase job model motivated by critical use cases of burst buffer,
-i.e., application's bursty I/O pattern and data pre-fetch/cache.
-
-In this work, we demonstrate that when burst buffer is intelligently allocated 
-by our novel batch scheduler, the benefit is far beyond the higher hardware transfer bandwidth.
-The job execution is expedited by having their bursty I/O requests absorbed by burst buffer.
-The job waiting time is reduced via the contracted input/output stage in the scheduling pipeline.
-To our best knowledge, this is the first attempt to holistically schedule jobs
-running on the new burst-buffer-enabled HPC systems.
-
-%4. Contribution summary and paper structure
-%Our contributions in this paper are summarized as follows:
-%\begin{enumerate}
-%        \item Explore how HPC workload scheduler allocates burst buffer resources.
-%                We propose a 3-phase application model tailored the typical
-%                usage scenarios of burst buffer, that is, checkpoint restart,
-%                data file/cache stage in and stage out.
-%        \item On the basis of 3-phase job model, we present Cerberus,
-%                a burst buffer aware HPC workload scheduler.
-%                Dividing the lifetime of user application to different phases,
-%                Cerberus makes it possible to conquer the scheduling goal separately.
-%        \item We suggest several optimizing goals for each phases.
-%                Though optimal scheduling problem in each phase is NP-hard,
-%                dynamic programming with memorization could give precise solutions
-%                in practice.
-%\end{enumerate}
-
-%In the reminder of this paper,
-%the next section begins elaborating the 3-phase model (section~\ref{Sec:Model}),
-%after which Cerberus is introduced in section~\ref{Sec:Scheduler}.
-%The details of formulating and solving scheduling problems with
-%dynamic programming at each job phase are also
-%enumerated in section~\ref{Sec:Scheduler}.
-%Starting from section~\ref{Sec:Experiments}, we validate Cerberus
-%by simulating the full Trinity supercomputing platform, featured with
-%burst buffer hardware.
-%Related works are discussed in section~\ref{Sec:RelatedWorks}.
-%We conclude this paper and list possible future works in section~\ref{Sec:Conclusion}.
-

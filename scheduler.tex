@@ -2,11 +2,13 @@
 \label{Sec:Scheduler}
 
 \begin{figure}[htp]
-\centering
-        \includegraphics[width=3.6in]{3PhaseJobFSM}
-        \caption{Job state transition in Cerberus}
-\label{Fig:JobFSM}
+        \centering
+        \includegraphics[width=3.6in]{CerberusBBSystem}
+        \caption{The design of Three-Phase burst buffer aware scheduling. The black arrows indicate 
+        the jobs changing of status; the red, brown and blue arrows in the bottom indicate the data flow in different phases.}
+        \label{Fig:CerberusBBSystem}
 \end{figure}
+
 
 \subsection{Three-Phase Job Scheduling}
 
@@ -23,33 +25,16 @@ We assume that upon job submission, a user specifies the amount of compute nodes
 the expected job runtime, and the amount of burst buffer needed by her job.
 Cerberus makes scheduling decisions based on the job demands of computing nodes as well as burst buffer.
 It allocates burst buffer to each job with regard to its use cases
-by maintaining three distinct queues, as shown in Figure~\ref{Fig:CerberusQueues}.
+by maintaining three distinct queues, as shown in Figure~\ref{Fig:CerberusBBSystem}.
 The input queue $Q_I$ contains all the jobs that need to prefetch data
 from the external storage to the burst buffer.
 The running queue $Q_R$ holds the jobs that are waiting for the compute nodes and
 the burst buffer used in data exchange for various purposes.
 Jobs waiting to be drained out to the external permanent storage are in the output queue $Q_O$.
-The layered hierarchy in Figure~\ref{Fig:CerberusQueues} also indicates that burst buffer
+The layered hierarchy in Figure~\ref{Fig:CerberusBBSystem} also indicates that burst buffer
 can fill in the memory gap between the memory on compute nodes and the hard disk storage.
 Cerberus coordinates three queues and makes scheduling decisions according to job requirements
 in each queue with the objective to maximize job performance and system utilization.
-
-%\NOTE{This paragraph moved to start of Section 3}The traditional batch scheduler on a system without burst buffer only considers
-%the job with the number of required nodes and the expected runtime for the scheduling decision making process.
-%The most commonly used scheduling policy is the First Come First Serve with EASY backfilling~\cite{tsafrir-tpds-2007}.
-%However, on burst-buffer-enabled systems,
-%the amount of available burst buffer capacity becomes a new scheduling constraint.
-%We propose Cerberus, a burst-buffer-aware batch scheduler.
-%Cerberus takes the advantage of the most common use cases of burst buffer:
-%data stage-in, checkpointing, and data drain-out.
-%Cerberus allocates burst buffer in each phase for one of the three use cases
-%by maintaining three distinct queues, as shown in Figure~\ref{Fig:CerberusQueues}.
-%%Before entering each phase, job must enqueue to the corresponding queue.
-%The input queue $Q_I$ contains all the jobs that need to pre-fetch data from the external storage to the burst buffer.
-%The running queue $Q_R$ holds the jobs that are waiting for the compute nodes and the burst buffer used for checkpointing.
-%Jobs waiting to be drained out to the external permanent storage are in the output queue $Q_O$.
-%The layered hierarchy in Figure~\ref{Fig:CerberusQueues} also indicates that burst buffer
-%can fill in the memory gap between the memory on compute nodes and the hard disk storage.
 
 To see how Cerberus schedules a particular job by manipulating three queues,
 we present the job transition diagram in Figure~\ref{Fig:JobFSM}.
@@ -81,6 +66,13 @@ described in Section~\ref{SubSec:OptStageIn}-\ref{SubSec:OptStageOut}.
 %The divide-conquer approach provides a framework that can be extended to various scheduling
 %policies for each individual phase.
 %We propose and solve two optimizations targeting $Q_I/Q_O$ and $Q_R$ in Section~\ref{Sec:Opt}
+
+\begin{figure}[htp]
+\centering
+        \includegraphics[width=3.6in]{3PhaseJobFSM}
+        \caption{Job state transition in Cerberus}
+\label{Fig:JobFSM}
+\end{figure}
 
 \subsection{Three-Phase Coordination}
 \label{SubSec:Coordination}

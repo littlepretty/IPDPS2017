@@ -1,60 +1,9 @@
 \section{Three-Phase Job Model}
 \label{Sec:Model}
 
-\begin{figure}[htp]
-        \centering
-        \includegraphics[width=3.6in]{CerberusBBSystem}
-        \caption{The design of Three-Phase burst buffer aware scheduling. The black arrows indicate 
-        the jobs changing of status; the red, brown and blue arrows in the bottom indicate the data flow in different phases.}
-        \label{Fig:CerberusQueues}
-\end{figure}
-
 Before we give the details of our Cerberus design, 
 in this section we describe our three-phase job model 
 and the corresponding resource demand at each phase. 
-
-%The batch scheduler makes scheduling decisions for 
-%each job based on its demand while attempting to
-%minimize the overall job response time and maximize the system throughput.
-%However, jobs requiring more than one resource could result in possible deadlocks and starvation.
-%In order to improve the overall resource utilization and the system responsiveness, we propose
-%a fine granularity job model based on the possible use cases of burst buffer.
-%In our scheduling framework, the system resources include compute nodes and burst buffer.
-%The job resource demand varies in different execution phases;
-%Correspondingly, the batch scheduler makes scheduling decisions in each phase.
-
-
-% Users request the system to run their applications as jobs.
-% We define $J = (job_1, job_2, \ldots, job_n)$ to be the set of all unfinished jobs in the system.
-% To fully utilizing burst buffer, we divide jobs into 3 different phases.
-% In the first phases, input data are staged in from I/O nodes to burst buffer.
-% We refer this phase as \textit{stage-in} phase.
-% It is very easy for user to provide the amount of input data
-% because they should already be available before application execution. 
-% Then the job can run on the compute nodes after being scheduled;
-% except reading data from burst buffer, there may be interaction between 
-% computer node and burst buffer.
-% These interactions are mainly due to fault tolerance reasons, like check-pointing.
-% This phase is called \textit{running} phase.
-% When computation is done, output data needs to be staged out to external PFS from memory,
-% namely \textit{stage-out} phase.
-% Burst buffer plays as an efficient I/O broker for compute nodes,
-% in replacing of traditional I/O nodes.
-
-
-%=============Xu======================
-%\subsection{Three-Phase Job Model}
-
-%Applications can benefit from burst buffer in three major ways\cite{BBUseCase}.
-%Before execution, job pre-fetch data from the external storage to the burst buffer.
-%When jobs start running on the compute nodes,
-%they could burst the checkpoint data to the burst buffer at high speed.
-%Upon the job completion, 
-%useful output data are staged out to the burst buffer for early releasing the compute nodes.
-%Therefore, we divide the job lifetime into three different phases, as illustrated in
-%Figure~\ref{Fig:CerberusQueues}.
-%\NOTE{I prefer we keep this paragraph. Because it explains why 3-Phase make sense.3-Phase is based on app's use case of bb.}
-
  
 \textbf{Stage-In}: After submitted to the HPC system,
          jobs need to prefetch data, such as configuration files, libraries and input data,
@@ -183,7 +132,7 @@ Table~\ref{Tab:Symbols} summarizes the meaning of symbols used in this paper.
 %$bb\_out$ is released.
 
 
-\begin{table}[ht] 
+\begin{table}[h] 
         \renewcommand{\arraystretch}{1.3}
         \caption{Summary of Symbols}
         \label{Tab:Symbols}

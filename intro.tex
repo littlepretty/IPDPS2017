@@ -1,59 +1,5 @@
 \section{Introduction}
 
-%1. Current I/O structure
-% In today's high-performance computing (HPC) systems,
-% application's performance is no longer only throttled by computation capability,
-% but also perceived I/O rate between
-% numerous amount of parallel processor cores and 
-% petabyte volume of storage equipments.
-% Current I/O architects put I/O forwarding nodes in charge of performing I/O.
-% These I/O gateways, together with parallel file system (PFS) software (client side),
-% sits between internal system networks that serving communication
-% between compute nodes and external system networks
-% that interconnects storage nodes\cite{Ross:IOSystem}.
-% Applications under this architecture can expect to achieve
-% 810 GB/s per PFS sustained bandwidth in Trinity's Lustre\cite{TrinitySystem}
-% in later 2016, but still far from the target of 60 TB/s
-% for extra-scale computing platform\cite{Shalf:HPCCS:2010}.
-
-% %2. Challenge to current I/O architecture and burst buffer come to resuce.
-% The challenge roots in the missing gap in HPC's memory hierarchy.
-% The ratio of I/O rate of memory on the compute node to the storage disk
-% is 100 to 10,000 cycles\cite{TrinitySystem}.
-% Such a gap makes difference because scientific applications on HPC are exposed to
-% bursty I/O patterns\cite{Carns:MSST:2011, Kim:PDSW:2010},
-% resulting from application's
-% defensive I/O strategy\cite{Latham:CSD:2012, Naik:ICPPW:2009, Dennis:CUG:2009}
-% and the needs of subsequent processing of application output.
-% 
-% 
-% %On one hand, applications checkpoint periodically
-% %(so that computation could be restarted after system fault)
-% %or store intermediate output for subsequent analysis or visualization;
-% %on the other hand, pushing data from memory to external,
-% %parallel file system is unproductive due to the I/O cycle gap.
-% %Though this conflict can be fixed by providing higher I/O bandwidth capacity,
-% %another character of bursty I/O pattern introduces another problem,
-% %underutilization of storage system.
-% %Production applications could generate hundreds of GB to
-% %tens of TB data in one I/O request with significant idle interval.
-% %For example, observed idle interval of write-intensive jobs
-% %reported on Intrepid\cite{Liu:MSST:2012},
-% %varies from several minutes to 2 hours.
-% 
-% %3. Very high level intro to burst buffer
-% As an alternative storage design, burst buffer\cite{Bent:HBP:2011, Grider:EXA:2010}
-% is targeting on fixing the issues caused by bursty I/O pattern.
-% It fills the gap in memory hierarchy with storage hardware technology
-% faster than traditional disks.
-% Bursty I/O requests could thus be efficiently absorbed and spread out
-% into burst buffer nodes.
-% Researchers\cite{Liu:MSST:2012} have demonstrated that application perceived I/O
-% bandwidth are significantly improved on burst buffer enabled system.
-% Given its usefulness, we expect user will explicitly request for
-% this new resource upon job submission.
-
-
 In the field of high performance computing (HPC), 
 system performance is no longer throttled only by computation capability,
 but also by the ever-increasing I/O gap
@@ -119,7 +65,7 @@ Put together, we make three key contributions in this work:
         \item    We develop an event driven simulator called BBSim
                 for simulating and evaluating Cerberus on a burst buffer enabled Blue Gene system
                 using authenitic job trace. The simulator is open source and
-                freely available to the community\cite{bbsim-github}.
+                freely available to the community.
 \end{enumerate}
 
 
