@@ -64,18 +64,16 @@ Put together, we make three key contributions in this work:
                 improving the performance of user jobs throughout different job phases.
         \item    We develop an event driven simulator called BBSim
                 for simulating and evaluating Cerberus on a burst buffer enabled Blue Gene system
-                using authenitic job trace. The simulator is open source and
+                using authentic job trace. The simulator is open source and
                 freely available to the community.
 \end{enumerate}
 
 
 In the remainder of this paper, Section 2 presents background and 
-motivation of using burst buffer on HPC systems.
-Section~\ref{Sec:Model} elaborates the three-phase job model.
+how existing batch scheduler handle burst buffer on HPC systems.
+Section~\ref{Sec:Model} elaborates our three-phase job model.
 Section~\ref{Sec:Scheduler} describes the design of Cerberus.
 Section~\ref{Sec:Simulation} describes the design of BBsim, the event driven scheduling simulator.
 Section~\ref{Sec:Experiments} evaluates Cerberus by comparing it with various alternatives.
-Section~\ref{Sec:RelatedWorks} discusses the related works, 
-and Section~\ref{Sec:Conclusion} concludes this paper.
-
+Section~\ref{Sec:Conclusion} concludes this paper.
 
