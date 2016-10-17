@@ -1,17 +1,4 @@
-% \section{Event-driven Burst Buffer Simulator}
-% \label{Sec:Simulation}
-
-% We develop an event-driven simulator for burst buffer enabled HPC system, named \textbf{BBSim},
-% from scratch in Python to mimic Cerberus scheduling Trinity.\NOTE{Fig has no info about Trinity}
-% It roughly consists of 1,400 lines of code.
-% Figure~\ref{Fig:JobFSM} illustrates the simulation lifetime of a job in BBSim
-% using extended finite state machine (EFSM).
-% The \textit{state} of the job changes depending on current status and
-% happening \textit{events}, along with which an \textit{action} is taken.
-% For example, at the very beginning, submitted $job_i$ will enter \textbf{Waiting Stage-in} state;
-% at the meanwhile, $job_i$ is enqueued to $Q_I$ and scheduler is triggered to do scheduling.
-
-\section{BBSim: An Event Driven Simulator of Cerberus}
+\section{BBSim: An Event Driven Simulator for Burst Buffer}
 \label{Sec:Simulation}
 
 We develop an event-driven simulator, named \textbf{BBSim},
@@ -26,43 +13,6 @@ it enters the \textit{Waiting Stage-in} state,
 waiting to be scheduled in the job queue $Q_I$. 
 The scheduler checks $job_i$'s resource demand and
 dispatches it to run when sufficient resources are available.
-
-% Whenever job enters one of its 3 phases, system resources are allocated:
-% \begin{itemize}
-%         \item $BB_{in}$ TB amount of burst buffer are allocated upon entering stage-in phase.
-%         \item $CN$ number of compute nodes and $BB_{run}$ amount of burst buffer
-%                 are allocated upon entering running phase.
-%         \item $BB_{out}$ TB of burst buffer are allocated upon entering stage-out phase.
-% \end{itemize}
-% Various \texttt{release()} actions are of importance because, in addition to submission,
-% \texttt{schedule()} is invoked to schedule waiting jobs
-% whenever system resources are released:
-% \begin{itemize}
-%         \item When job's data is loaded from burst buffer to memory,
-%                 burst buffer allocated at stage-in phase are released.
-%         \item When job finishes running, system reclaims burst buffer nodes
-%                 used for checkpointing.
-%         \item When job's data is written to burst buffer from memory,
-%                 compute nodes taken by job are returned.
-%         \item When job's data is staged out to external disk,
-%                 its burst buffer nodes are released.
-% \end{itemize}
-% 
-% \begin{figure}[!t]
-% \centering
-%         \includegraphics[width=3.6in]{3PhaseJobFSM}
-%         \caption{Finite State Machine of Scheduling Simulation}
-% \label{Fig:JobFSM}
-% \end{figure}
-
-
-%Whenever $job_i$ enters one of the three phases, the system resources are allocated in the following way:
-%\begin{itemize}
-        %\item $BB_{in}$ TB amount of burst buffer are allocated upon entering the stage-in phase.
-        %\item $CN$ number of compute nodes and $BB_{run}$ amount of burst buffer
-                %are allocated upon entering the running phase.
-        %\item $BB_{out}$ TB of burst buffer is allocated upon entering the stage-out phase.
-%\end{itemize}
 
 Various \texttt{release()} actions are important because, in addition to job submissions,
 \texttt{schedule()} will be invoked to schedule the waiting jobs.
@@ -81,9 +31,6 @@ The allocated resources are released at the following time points:
                 the burst buffer allocated in the stage-out phase ($BB_{out}$) is released.
                 The simulation for $job_i$ completes.
 \end{itemize}
-
-
-
 
 % Notice that resource can only be released when certain phase is finished.
 % Therefore, any \textit{dispatch} event, caused by \texttt{schedule()} action, actually happens
@@ -141,14 +88,16 @@ the \texttt{Cerberus} scheduler in \texttt{scheduler}.
 Though targeting on burst buffer enabled systems,
 BBSim also supports simulating job scheduling on HPC systems without burst buffer.
 Besides, it is easy to integrate other scheduling policies into BBSim.
+For example, we have implemented the naive burst-buffer aware scheduler
+(e.g. SLURM shown in Figure~\ref{Fig:SlurmQueue}) as a scheduling module in BBSim,
+which enable us to evaluate the performance improvement achieved by our multiple-queue Cerberus.
 The codebase of BBSim and Cerberus will be made public to the community.
-
 
 We use BBSim to simulate
 a burst-buffer-enabled HPC system shown in Figure~\ref{Fig:BBArchitecture}.
 The system adopts traditional IBM Blue Gene/P architecture but burst buffer are
 assumably available in the I/O nodes.
-We simulate a system consists of 18,936 compute nodes,
+The system consists of 18,936 compute nodes,
 e.g., 9,436 Intel Haswell nodes and 9,500 Intel Xeon Phi nodes.
 The parameters related to burst buffer are taken from the 
 NERSC-8 Use Case Scenarios technical report\cite{BBUseCase} on Trinity system\cite{TrinitySystem},
@@ -167,17 +116,3 @@ dividing the amount of transferred data by the corresponding bandwidth.
 \label{Fig:BBArchitecture}
 \end{figure}
 
-% % trace
-% Job trace is from ANL's Blue Gene Intrepid system,
-% containing totally 68,936 jobs run during January to September 2009\cite{JobTrace}.
-% We extract two critical fields from this jobs trace: running time and
-% number of cores user requested.
-% In this section we take a window of 1,185 jobs and report their scheduling results.
-% We patched 3 fields to each job's log entry: the amount of input data $data\_in$,
-% the total amount of written data for checkpointings $data\_run$
-% and the amount of output data $data\_out$.
-% We assume $data\_run$ and $data\_out$ follows uniform distribution with
-% lower boundary of 1 TiB and upper boundary of 60 TiB;
-% $data\_in$ follows uniform distribution between 1 GiB and 30 Gib.
-% The patches 3 fields may or may not be used in scheduling,
-% depends on both the model of the jobs and the experiment scenario.

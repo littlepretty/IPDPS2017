@@ -35,13 +35,13 @@ def utilizationPlot(prefix, column='cpu'):
     figure_no += 1
 
     if column != 'bb':
-        plt.plot(x0, y0, label='1-Phase IO', linewidth=3,
+        plt.plot(x0, y0, label='SLURM/PBS', linewidth=3,
                  color='blue', linestyle='--')
-    plt.plot(x1, y1, label='1-Phase-1D', linewidth=3,
+    plt.plot(x1, y1, label='SLURM/PBS', linewidth=3,
              color='red', linestyle='--')
-    plt.plot(x2, y2, label='3-Phase-1D', linewidth=3,
+    plt.plot(x2, y2, label='Reduced', linewidth=3,
              color='green', linestyle='--')
-    plt.plot(x3, y3, label='3-Phase-3D', linewidth=3,
+    plt.plot(x3, y3, label='Cerberus', linewidth=3,
              color='black', linestyle='--')
 
     plt.legend(loc='lower right')
@@ -117,11 +117,11 @@ def timePlot(prefix, column='response'):
     plt.figure(figure_no)
     figure_no += 1
     plt.plot(sorted_time1, yvals1*100, 'b-',
-             label='1-Phase-1D', linewidth=3)
+             label='SLURM/PBS', linewidth=3)
     plt.plot(sorted_time2, yvals2*100, 'r-.',
-             label='3-Phase-1D', linewidth=3)
+             label='Reduced', linewidth=3)
     plt.plot(sorted_time3, yvals3*100, 'g--',
-             label='3-Phase-3D', linewidth=3)
+             label='Cerberus', linewidth=3)
     log.info('Worst-case ratio between %s' % column)
     log.add().info('%2f : %.2f : %.2f' %
                    (sorted_time1[-1], sorted_time2[-1], sorted_time3[-1]))
@@ -164,7 +164,7 @@ def throughputPlot(prefix, delta=500.0):
     all_data = [data1, data2, data3]
     avgs = []
     lines = ['b:', 'r:', 'g:', 'b', 'r', 'g']
-    labels = ['1-Phase-1D', '3-Phase-1D', '3-Phase-3D']
+    labels = ['SLURM/PBS', 'Reduced', 'Cerberus']
     hatches = ['/', '\\', '-']
     width = 40000
     i = 0

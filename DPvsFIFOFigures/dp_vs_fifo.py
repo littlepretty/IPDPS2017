@@ -32,7 +32,7 @@ def throughputPlot(prefix, delta=500.0):
     """data3 = np.genfromtxt(file_prefix + '_maxparallel.out.csv', delimiter=',',
                           skip_header=1, names=first_row3)"""
     lines = ['b:', 'r:', 'g:', 'b', 'r', 'g']
-    labels = ['Naive', 'Cerberus', 'MaxP Cerberus']
+    labels = ['Plain', 'Optimized', 'MaxP Cerberus']
     hatches = ['/', '\\', '-']
     all_data = [data1, data2]
     avgs = []
@@ -122,7 +122,7 @@ def cdfPlot(prefix, column='wait'):
                           skip_header=1, names=first_row3)"""
     plt.figure(figure_no)
     figure_no += 1
-    labels = ['Naive', 'Cerberus', 'MaxP Cerberus']
+    labels = ['Plain', 'Optimized', 'MaxP Cerberus']
     lines = ['b-', 'r--', 'g:']
     i = 0
     for data in [data1, data2]:
