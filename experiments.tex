@@ -137,7 +137,7 @@ and the average system throughput will be improved as much as 136\%.}
 We investigate the performance of scheduling jobs in different scheduling frameworks shown in Figure~\ref{Fig:CompareSlurmCerberus}.
 As we discussed before, Cerberus is designed for scheduling the three-phase modeled jobs. 
 It makes scheduling decisions in finer granularity than SLURM and PBS.
-In Figure~\ref{Fig:3Pvs1PResponse}, the scheduling results based on three job models
+In Figure~\ref{Fig:3Pvs1PPerformance}, the scheduling results based on three job models
 are presented:
 \begin{itemize}
         \item \textbf{SLURM/PBS}: Jobs are submitted with the total burst buffer demand,
@@ -165,7 +165,7 @@ The improvement is about 14.95\% in the worst case scenario.
 Here is the explanation: In the single-queue SLURM, burst buffer nodes
 are exclusively taken by the scheduled jobs throughout their entire lifetime.
 In contrast, Cerberus reclaims the burst buffer multiple times;
-It also releases the burst buffer nodes and the CPU resources at the earliest possible time, which allows Cerberus to utilize more system resources.
+It also releases the burst buffer nodes and the CPU resources at the earliest possible time, which utilizing more system resources.
 %Finally, when comparing the cases of 3-Phase-3D with 3-Phase-1D, we find another advantage of our 3-phase model.
 
 In addition, if users can provide fine-grain information of data I/O demands,
@@ -188,7 +188,7 @@ Correspondingly jobs in Cerberus have three kinds of waiting time: waiting input
 %Figure~\ref{Fig:3Pvs1PWaitIn} shows the time job spend in inputing queue,
 %Figure~\ref{Fig:3Pvs1PWaitOut} the time job spend in outputing queue.
 For single-queue scheduler the waiting time in Figure~\ref{Fig:3Pvs1PWaitRun} is also the total waiting time.
-We observe that (not shown in Figure~\ref{Fig:3Pvs1PWaitRun}) the jobs did not
+We observe that (not shown in Figure~\ref{Fig:3Pvs1PPerformance}) the jobs did not
 take much time either in the input queue $Q_I$ nor in the output queue.
 The upper bounds of time spent in the input queue, e.g. waiting time in $Q_I$, are 
 2,500 seconds for both 3-Phase-1D and 3-Phase-3D modeled jobs.
@@ -211,14 +211,14 @@ Cerberus runs counter to both previous cases.
 Even though there is a throughput drop between 100,000 to 150,000 seconds,
 it manages to make the system having a high throughput at the beginning and
 later changes from 150,000 to 300,000 seconds.
-\textit{In average, the throughput of Cerberus is 1.575 jobs / 500 seconds.}
+In average, \textit{the throughput of Cerberus is 1.575 jobs / 500 seconds.}
 It is 11.39\% higher than the reduced case (1.414 jobs / 500 seconds) and
 23.68\% higher than SLURM/PBS(1.202 jobs / 500 seconds).
 We believe that the results validate the indispensable three phase job model as well as
 the multiple queue framework.
 They also justifies the necessity of burst buffer triple.
 We can now answer the question \textbf{Q2}:
-\textit{the fine-grained multiple-queue scheduling could benefit both job-level and system-level performance.}
+\textit{the fine-grained multiple-queue scheduling benefits both job-level and system-level performance.}
 
 \begin{figure*}[t]
         \centering

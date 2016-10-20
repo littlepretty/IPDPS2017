@@ -12,7 +12,7 @@
         \label{Fig:CerberusQueues}
 }
 \caption{Architecture Comparison: Single-Queue Adopted by Existing Batch Scheduler v.s. Multiple-Queue Used by Cerberus}
-\label{Fig:CompareSlurmCerbuers}
+\label{Fig:CompareSlurmCerberus}
 \end{figure*}
 
 %1. The appear of burst buffer
@@ -78,7 +78,7 @@ However, there are three problems in such single-queueing framework.
 First, even though job's lifetime is conceptionally divided into 3 phases
 (e.g. staging in, running and staging out) by the existing batch schedulers like SLURM,
 they are in fact just the running phase because scheduler cannot do anything once a job is kicked off.
-Secondly, a dispatched job will keep taking up its computing nodes and burst buffer nodes during its entire execution duration.
+Secondly, a dispatched job will keep taking up its computing nodes and burst buffer nodes during entire execution.
 One may argue that there are cases that a job only need burst buffer to do I/O operations,
 and there are cases that job can release computing nodes as soon as computation results is buffered
 in burst buffer.
@@ -107,7 +107,7 @@ Besides, the finer granularity introduced by more queues can further exploit
 both the computing nodes and burst buffer nodes.
 When finishing each phases, job will release its acquired resources, making it possible
 to be allocated to other jobs promptly.
-For example, when the golden job finish running, it will release the burst buffer it used to
+For example, when the golden job, in Figure~\ref{Fig:CerberusQueues}, finish running, it will release the burst buffer it used to
 do checkpointing, which can be immediately available to jobs in any phases.
 We also integrate queues in Cerberus with different optimization algorithms for the
 objective of maximizing the resource utilization and the system throughput.
@@ -116,6 +116,6 @@ In the following sections, we demonstrate that when burst buffer is intelligentl
 by our novel batch scheduler, the benefit is far beyond the higher hardware transfer bandwidth.
 The job execution is expedited by having their bursty I/O requests absorbed by burst buffer.
 The job waiting time is reduced via the contracted input/output stage in the scheduling pipeline.
-To our best knowledge, this is the first attempt to holistically schedule jobs
-running on the new burst-buffer-enabled HPC systems.
+To our best knowledge, this is the first attempt to holistically research job scheduling
+on the new burst-buffer-enabled HPC systems.
 
