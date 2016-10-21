@@ -81,7 +81,7 @@ Cooperations are necessary in scheduling the three phases.
 First, only after finishing the stage-in phase can a job be ready for running.
 Similarly, only when finishing the running phase can a job waiting or entering the stage-out phase,
 reflected in the lifetime of a job's execution.
-This is still true even when input data is so large that it must be read in in chunks.
+This is still true even when input data is so large that it must be read in chunks.
 In this case we load the first chunk of data in the stage-in phase so that application
 can run with one chunk of data;
 meanwhile, the application has to keep reading data in chunks during the running phase.
