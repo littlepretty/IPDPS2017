@@ -34,12 +34,12 @@ Jobs waiting to be drained out to the external permanent storage are in the outp
 The layered hierarchy in Figure~\ref{Fig:CerberusBBSystem} also indicates that burst buffer
 can fill in the memory gap between the memory on compute nodes and the hard disk storage.
 Cerberus coordinates three queues and makes scheduling decisions according to job requirements
-in each queue with the objective to maximize job performance and system utilization.
+in each queue with the objective of maximize job performance and system utilization.
 
 To see how Cerberus schedules a particular job by manipulating three queues,
 we present the job transition diagram in Figure~\ref{Fig:JobFSM}.
 After the submission, a job enters $Q_I$ waiting for the stage-in-purpose burst buffer ($BB_{in}$).
-Once selected by Cerberus, the job is removed from $Q_I$ and start to stage input data.
+Once selected by Cerberus, the job is removed from $Q_I$ and start to fetch input data.
 After finishing the stage-in phase, the job is enqueued to $Q_R$,
 where it waits for the required compute nodes and \textit{new} burst buffer used in running phase($BB_{run}$).
 Note that $BB_{in}$ is still held by the job at this time point.
@@ -86,7 +86,7 @@ In this case we load the first chunk of data in the stage-in phase so that appli
 can run with one chunk of data;
 meanwhile, the application has to keep reading data in chunks during the running phase.
 Notice that for this purpose, we only need burst buffer that is able to hold one chunk
-of, instead of whole, the input data.
+of, instead of whole, input data.
 However, this case barely happens because of burst buffer's reasonable capacity\footnote{For
 example, 3.7 PB burst buffer on Trinity system should be able to hold most single job's input.}.
 
@@ -97,7 +97,7 @@ regardless whether the holding burst buffer has sufficient capacity.
 In Cerberus, the resource release is mandatory as specified in Figure~\ref{Fig:JobFSM}.
 We believe that frequent releases provide more opportunities to involve the scheduler in each phase for scheduling the jobs.
 
-Most of the time, data exchanges only between main memory and burst buffer in running phase.
+Most of the time, data exchanges only occur between main memory and burst buffer in running phase.
 This rule breaks when application generates output data more than main memory's capacity.
 When this case occurs, we suggest system put output data chunk first from memory to burst buffer
 so that application can resume execution with freed memory;

@@ -3,7 +3,7 @@
 
 Before we give the details of our Cerberus design, 
 in this section we describe our three-phase job model 
-and the corresponding resource demand at each phase. 
+and the corresponding resource demands at each phase. 
  
 \textbf{Stage-In}: After submitted to the HPC system,
          jobs need to prefetch data, such as configuration files, libraries and input data,
@@ -73,7 +73,7 @@ and the corresponding resource demand at each phase.
 %=========XY===============
 Jobs are submitted to the system with the specified resource demand.
 Each job is associated with a demand vector in the form of $(c, ert)$,
-where $c$ is the number of needed compute nodes in the running phase,
+where $c$ is the number of needed compute nodes in the running phase, and
 $ert$ is the expected runtime.
 In a burst-buffer-enabled system, the demand vector should be augmented
 with fields defining user's requests on the burst buffer capacity.

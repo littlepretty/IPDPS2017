@@ -49,10 +49,10 @@ There are more use cases for burst buffer nodes.
 Among them, \textit{data cache} is equally important to enhance the responsiveness
 of applications by improving the perceived I/O bandwidth\cite{TrinitySystem}.
 Shared object library or read-only configuration files are cached into burst buffer;
-the list of input files specific to a group of compute nodes allocated to
-a particular job are loaded into burst buffer prior to the execution.
+a list of input files specific to a group of compute nodes allocated to
+a particular job is loaded into burst buffer prior to the execution.
 Economical solid-state disks as a tier of burst buffer could also be used as
-out-of-core complement to insufficient main memory\cite{Romanus:CORR:15},
+out-of-core complement of insufficient main memory\cite{Romanus:CORR:15},
 or working place for data analysis (reductions, feature extraction compression etc.)
 and visualization\cite{TrinitySystem}.
 
@@ -67,7 +67,7 @@ be aware of burst buffer, but in fact only deals with it in a naive way.
 
 Figure~\ref{Fig:SlurmQueue} depicts the way existing burst-buffer-aware scheduler manages burst buffer.
 For example, SLRUM developed a module that allocates burst buffer resources to the submitted user jobs.
-The module extra considers if jobs' burst buffer requirements are meet when making scheduling decision.
+The module extra considers if jobs' burst buffer requirements are met when making scheduling decision.
 With the pre-allocated burst buffer,
 the I/O performance of user jobs indeed can be improved\cite{SlurmBBGuide}.
 PBS supports burst buffer aware scheduling in similar way as SLURM:
@@ -80,7 +80,7 @@ First, even though job's lifetime is conceptionally divided into 3 phases
 they are in fact just the running phase because scheduler cannot do anything once a job is kicked off.
 Secondly, a dispatched job will keep taking up its computing nodes and burst buffer nodes during entire execution.
 One may argue that there are cases that a job only need burst buffer to do I/O operations,
-and there are cases that job can release computing nodes as soon as computation results is buffered
+and there are cases that job can release computing nodes as soon as computation results are buffered
 in burst buffer.
 Finally, burst buffer and computing nodes are allocated altogether
 in the straightforward first-come, first-served manner, without doing any optimization.
@@ -89,7 +89,7 @@ is far from fully exploiting the utilization of burst buffer.
 
 %5. Brief intro about our works
 This paper aims to bridge the two isolated fields of HPC architecture:
-the novel burst buffer equipped HPC I/O subsystem and the
+the novel burst buffer equipped with HPC I/O subsystem and the
 traditional batch job queueing subsystem.
 The bridge builds upon a three-phase job model motivated by critical use cases of burst buffer.
 In three-phase job model, users are encouraged to provide the burst buffer demand on submission
@@ -97,17 +97,16 @@ and the execution of job is modeled into stage-in, running and stage-out phases.
 The user jobs will acquire different resources before entering each phase.
 This three-phase job model enables our burst-buffer-aware scheduler, Cerberus,
 to adopt the scheduling framework illustrated in Figure~\ref{Fig:CerberusQueues}.
-Comparing with the existing batch scheduler like SLRUM and PBS,
-our approach have the following advantages.
 
-The most difference is that there are three queues in Cerberus.
+Comparing with the existing batch scheduler like SLRUM and PBS,
+our approach have the following advantages.The most difference is that there are three queues in Cerberus.
 In three phase model, job demands different kind of resources at each phase.
 Cerberus can deal with different resource demand by holding jobs in particular phase in designated queue.
 Besides, the finer granularity introduced by more queues can further exploit
 both the computing nodes and burst buffer nodes.
 When finishing each phases, job will release its acquired resources, making it possible
 to be allocated to other jobs promptly.
-For example, when the golden job, in Figure~\ref{Fig:CerberusQueues}, finish running, it will release the burst buffer it used to
+For example, when the golden job, in Figure~\ref{Fig:CerberusQueues}, finishes running, it will release the burst buffer it used to
 do checkpointing, which can be immediately available to jobs in any phases.
 We also integrate queues in Cerberus with different optimization algorithms for the
 objective of maximizing the resource utilization and the system throughput.

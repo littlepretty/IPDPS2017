@@ -58,7 +58,7 @@ a fixed time period (500 seconds).
 We examine the scheduling performance when 
 jobs perform I/O operation in two different ways, 
 namely, \textit{utilizing burst buffer} and \textit{Direct I/O}.
-In the Trinity architecture, parallel file system (PFS) is mounted by all the compute nodes,
+In the Trinity architecture, parallel file system (PFS) is mounted to all the compute nodes,
 applications have the option to bypass the burst buffer 
 and to use the file system directly for their I/O operations.
 We refer this scenario as \textit{Direct I/O}. 
@@ -73,7 +73,7 @@ i.e., a job takes 889,239.20 seconds to finish,
 which is 2.36 times slower than the slowest non-responsive job
 in the burst-buffer-enabled system.
 In average, \textit{nearly 99\%} of the jobs scheduled on the burst-buffer-enabled system
-respond faster than the traditional system without burst buffer, since the burst buffer can mitigate the I/O gap between I/O nodes and compute nodes.
+respond faster than the traditional system without burst buffer, because the burst buffer can mitigate the I/O gap between I/O nodes and compute nodes.
 
 
 Figure~\ref{Fig:DirectIOvsBBWait} reveals the aggregated job waiting time.
@@ -162,37 +162,38 @@ SLURM.
 The slowest three-phase-modeled job takes 418,927 seconds to finish in Reduced Cerberus,
 while the slowest job scheduled by SLURM takes about 492,591 seconds to finish.
 The improvement is about 14.95\% in the worst case scenario.
-Here is the explanation: In the single-queue SLURM, burst buffer nodes
+The explanation is: In the single-queue SLURM, burst buffer nodes
 are exclusively taken by the scheduled jobs throughout their entire lifetime.
 In contrast, Cerberus reclaims the burst buffer multiple times;
-It also releases the burst buffer nodes and the CPU resources at the earliest possible time, which utilizing more system resources.
+It also releases the burst buffer nodes and the CPU resources at the earliest possible time, 
+utilizing more system resources.
 %Finally, when comparing the cases of 3-Phase-3D with 3-Phase-1D, we find another advantage of our 3-phase model.
 
 In addition, if users can provide fine-grain information of data I/O demands,
-Cerberus can coordinate three queues and make scheduling decision separately to achieve better scheduling result.
+Cerberus can coordinate three queues and make scheduling decision separately to achieve better scheduling results.
 With burst buffer triple, Cerberus knows each job's demand during different phases.
 The worst absolute response time is less than 379,026 seconds.
 This is about 10.24\% improvement to Reduced Cerberus.
 Even when Cerberus only knows the upper bound of data demand,
-it is 23.66\% better than the slowest single-queueing system.
+it is 23.66\% better than the slowest single-queue system.
 In average, \textit{more than 80\% of the multiple-queued jobs
-finish earlier than jobs in single-queueing system.}
+finish earlier than jobs in single-queue system.}
 Meanwhile, \textit{more than 60\% of the jobs take less time if user
 specifies burst buffer triple.}
 
 We now investigate the detailed waiting time to understand why the scheduling results in Cerberus
 are better than the naive integration of the batch scheduler with the burst buffer constraints.
-Figure~\ref{Fig:3Pvs1PWaitRun} shows the waiting running time, that is, how long a job spent in the running queue.
+Figure~\ref{Fig:3Pvs1PWaitRun} shows the waiting time, that is, how long a job spent in the running queue.
 There are three queues in Cerberus.
 Correspondingly jobs in Cerberus have three kinds of waiting time: waiting input, waiting running, and waiting output time.
 %Figure~\ref{Fig:3Pvs1PWaitIn} shows the time job spend in inputing queue,
 %Figure~\ref{Fig:3Pvs1PWaitOut} the time job spend in outputing queue.
 For single-queue scheduler the waiting time in Figure~\ref{Fig:3Pvs1PWaitRun} is also the total waiting time.
 We observe that (not shown in Figure~\ref{Fig:3Pvs1PPerformance}) the jobs did not
-take much time either in the input queue $Q_I$ nor in the output queue.
+take much time either in the input queue $Q_I$ or in the output queue.
 The upper bounds of time spent in the input queue, e.g. waiting time in $Q_I$, are 
 2,500 seconds for both 3-Phase-1D and 3-Phase-3D modeled jobs.
-This is because that the input data are usually very small (e.g., tens of GB)
+This is because the input data are usually very small (e.g., tens of GB)
 compared to the checkpointing data and the application output (e.g., tens of TB).
 In contrast, in the worst case of SLURM, the job waiting time is 443,203 seconds,
 because the scheduler makes a one-time decision based on the demand of the computer node and the maximum burst buffer.
